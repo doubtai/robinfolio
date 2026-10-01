@@ -2,6 +2,23 @@ const addressPattern=/^0x[\da-f]{40}$/i;
 const uintPattern=/^0x[\da-f]+$/i;
 const text=value=>String(value??'').slice(0,160);
 let stockCache=null,stockPromise=null;
+const logoCache=new Map();
+async function tokenImages(items){
+  const contracts=items.filter(item=>item.verifiedOrigin!=='Robinhood Stock Token').map(item=>item.contract.toLowerCase());
+  const missing=contracts.filter(key=>!logoCache.has(key)||logoCache.get(key).until<Date.now());
+  if(missing.length)try{
+    const response=await fetch('https://api.dexscreener.com/tokens/v1/robinhood/'+missing.join(','),{signal:AbortSignal.timeout(4000)});
+    if(!response.ok)throw Error();
+    const pairs=await response.json();if(!Array.isArray(pairs))throw Error();
+    for(const contract of missing){
+      // Pair artwork belongs to the base token, never to the quote token.
+      const pair=pairs.filter(p=>p.chainId==='robinhood'&&String(p.baseToken?.address).toLowerCase()===contract&&typeof p.info?.imageUrl==='string'&&p.info.imageUrl.startsWith('https://')).sort((a,b)=>(Number(b.liquidity?.usd)||0)-(Number(a.liquidity?.usd)||0))[0];
+      logoCache.set(contract,{url:pair?.info.imageUrl||null,until:Date.now()+(pair?3600000:300000)});
+    }
+    if(logoCache.size>2000)for(const key of [...logoCache.keys()].slice(0,logoCache.size-2000))logoCache.delete(key);
+  }catch{/* Optional artwork must never prevent balance discovery. */}
+  for(const item of items){const logo=logoCache.get(item.contract.toLowerCase());if(item.verifiedOrigin!=='Robinhood Stock Token'&&logo?.url){item.logo=logo.url;item.logoSource='DexScreener';}}
+}
 async function stockContracts(){
   if(stockCache&&Date.now()-stockCache.time<3600000)return stockCache.contracts;
   if(stockPromise)return stockPromise;
@@ -71,6 +88,7 @@ export default async function handler(request,response){
           return {contract:token.contractAddress,name:text(metadata.name||'Unknown token'),symbol:text(metadata.symbol||'ERC-20'),balanceRaw:token.tokenBalance,decimals:Number.isInteger(metadata.decimals)?metadata.decimals:null,balance:units(token.tokenBalance,metadata.decimals),logo:verifiedOrigin==='Robinhood Stock Token'?'https://cdn.robinhood.com/ncw_assets/logos/'+token.contractAddress.toLowerCase()+'.png':typeof metadata.logo==='string'&&metadata.logo.startsWith('https://')?metadata.logo:null,verifiedOrigin};
         })));
       }
+      await tokenImages(items);
     }else{
       const key=root.pathname.split('/')[2];
       const url=new URL(`/nft/v3/${key}/getNFTsForOwner`,root.origin);
