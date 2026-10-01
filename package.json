@@ -1,0 +1,11 @@
+{
+  "name": "robinfolio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "preview": "node preview.mjs",
+    "dev": "vercel dev",
+    "check": "node --check public/app.js && node --check api/rpc.js && node --check api/portfolio.js"
+  }
+}
+
