@@ -31,11 +31,23 @@ function assetImage(item){
   const safe=typeof url==='string'&&(url==='/eth.svg'||/^https:\/\//i.test(url));
   return '<span class="token-avatar"><span aria-hidden="true">'+esc((item.symbol||'?').slice(0,2))+'</span>'+(safe?'<img src="'+esc(url)+'" alt="'+esc(item.symbol)+' logo" loading="lazy" referrerpolicy="no-referrer">':'')+'</span>';
 }
+function walletTokenQuote(item){
+ if(!account||item.balance==null||item.balance==='')return null;
+ const contract=item.contract.toLowerCase(),quantity=Number(item.balance);if(!Number.isFinite(quantity)||quantity<0)return null;
+ if(quantity===0)return {value:0};
+ const positions=defiData?.items||[];
+ const receipt=positions.find(p=>p.contract?.toLowerCase()===contract&&!p.tokenId&&p.side!=='Debt'&&p.value!=null&&p.balanceRaw);
+ if(receipt&&item.balanceRaw)try{const units=BigInt(receipt.balanceRaw);if(units>0n){const value=Number(BigInt(item.balanceRaw))/Number(units)*receipt.value;if(Number.isFinite(value))return {value,estimated:true};}}catch{}
+ const currency=item.native?'0x0000000000000000000000000000000000000000':contract;
+ const price=positions.flatMap(p=>p.components||[]).find(c=>c.currency?.toLowerCase()===currency&&typeof c.priceUsd==='number'&&Number.isFinite(c.priceUsd)&&c.priceUsd>=0);
+ if(price){const value=quantity*price.priceUsd;if(Number.isFinite(value))return {value,estimated:true};}
+ return allocationData?.items.find(row=>row.contract===contract)||null;
+}
 function tokenLists(){
   const items=walletAssets(),stocks=items.filter(item=>item.verifiedOrigin==='Robinhood Stock Token');
   const tokens=items.filter(item=>item.verifiedOrigin!=='Robinhood Stock Token').sort((a,b)=>Number(Boolean(b.native))-Number(Boolean(a.native))||Number(Boolean(b.verifiedOrigin))-Number(Boolean(a.verifiedOrigin))||a.symbol.localeCompare(b.symbol));
   const note=!account?'Connect a wallet to check balances.':holdingsLoading.tokens?'Scanning wallet assets… '+(holdings.tokens?.pages||0)+' pages checked.':holdingsErrors.tokens||(holdings.tokens?.partial?'Some balances could not be read.':'Current wallet balances');
-  const list=(title,rows,stock)=>'<article class="glass asset-list"><div class="card-head"><h2>'+title+'</h2><small>'+rows.length+' assets</small></div><p class="subtle">'+esc(stock?(stocksLoading?'Loading official stocks…':stocksError||'Official Robinhood stock tokens'):note)+'</p><div class="asset-list-scroll"><table class="data-table"><thead><tr><th>ASSET</th><th>BALANCE</th><th>USD VALUE</th></tr></thead><tbody>'+rows.map(item=>{const quote=account?allocationData?.items.find(row=>row.contract===item.contract.toLowerCase()):null;return '<tr><td><div class="asset-cell">'+assetImage(item)+'<span><a class="asset-name" '+(!item.native?'href="'+CHAIN.explorer+'/token/'+encodeURIComponent(item.contract)+'" target="_blank" rel="noopener noreferrer"':'')+'>'+esc(item.symbol)+'</a><small>'+esc(item.name.replace(' • Robinhood Token',''))+'</small></span></div></td><td class="token-balance" title="'+esc(item.balance??'Unavailable')+'">'+esc(item.balance??'—')+'</td><td>'+(!account?'—':item.balance==='0'?'$0.00':quote?.value!=null?esc(money(quote.value)):'—')+'</td></tr>';}).join('')+(rows.length?'':'<tr><td colspan="3">'+esc(account?'No token balances loaded.':'Connect a wallet to view tokens.')+'</td></tr>')+'</tbody></table></div>'+(!stock&&holdingsErrors.tokens?'<button class="connect" data-holdings="tokens">Resume scan</button>':'')+'</article>';
+  const list=(title,rows,stock)=>'<article class="glass asset-list"><div class="card-head"><h2>'+title+'</h2><small>'+rows.length+' assets</small></div><p class="subtle">'+esc(stock?(stocksLoading?'Loading official stocks…':stocksError||'Official Robinhood stock tokens'):note)+'</p><div class="asset-list-scroll"><table class="data-table"><thead><tr><th>ASSET</th><th>BALANCE</th><th>USD VALUE</th></tr></thead><tbody>'+rows.map(item=>{const quote=walletTokenQuote(item);return '<tr><td><div class="asset-cell">'+assetImage(item)+'<span><a class="asset-name" '+(!item.native?'href="'+CHAIN.explorer+'/token/'+encodeURIComponent(item.contract)+'" target="_blank" rel="noopener noreferrer"':'')+'>'+esc(item.symbol)+'</a><small>'+esc(item.name.replace(' • Robinhood Token',''))+'</small></span></div></td><td class="token-balance" title="'+esc(item.balance??'Unavailable')+'">'+esc(item.balance??'—')+'</td><td>'+(!account?'—':item.balance==='0'?'$0.00':quote?.value!=null?esc(money(quote.value)):'—')+'</td></tr>';}).join('')+(rows.length?'':'<tr><td colspan="3">'+esc(account?'No token balances loaded.':'Connect a wallet to view tokens.')+'</td></tr>')+'</tbody></table></div>'+(!stock&&holdingsErrors.tokens?'<button class="connect" data-holdings="tokens">Resume scan</button>':'')+'</article>';
   return '<div class="asset-lists">'+list('Verified stock tokens',stocks,true)+list('Wallet tokens',tokens,false)+'</div>';
 }
 function allocationPanel(){
