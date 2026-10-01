@@ -68,7 +68,7 @@ export default async function handler(request,response){
             rpc(endpoint,'alchemy_getTokenMetadata',[token.contractAddress]).catch(()=>{partial=true;return {};}),
             origin(endpoint,token.contractAddress,stocks)
           ]);
-          return {contract:token.contractAddress,name:text(metadata.name||'Unknown token'),symbol:text(metadata.symbol||'ERC-20'),balanceRaw:token.tokenBalance,decimals:Number.isInteger(metadata.decimals)?metadata.decimals:null,balance:units(token.tokenBalance,metadata.decimals),verifiedOrigin};
+          return {contract:token.contractAddress,name:text(metadata.name||'Unknown token'),symbol:text(metadata.symbol||'ERC-20'),balanceRaw:token.tokenBalance,decimals:Number.isInteger(metadata.decimals)?metadata.decimals:null,balance:units(token.tokenBalance,metadata.decimals),logo:verifiedOrigin==='Robinhood Stock Token'?'https://cdn.robinhood.com/ncw_assets/logos/'+token.contractAddress.toLowerCase()+'.png':typeof metadata.logo==='string'&&metadata.logo.startsWith('https://')?metadata.logo:null,verifiedOrigin};
         })));
       }
     }else{
