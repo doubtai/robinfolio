@@ -29,3 +29,9 @@ const ctx=vm.createContext({});vm.runInContext(merge,ctx);ctx.base={items:[{id:'
 const merged=vm.runInContext('mergeDefi(base,extra)',ctx);assert.equal(merged.items.length,3);assert.equal(merged.items[0].value,12);assert.equal(ctx.base.items[0].protocol,'Morpho');assert.equal(vm.runInContext('mergeDefi(base,extra).items[0].protocol',ctx),'Morpho / Longbow');
 console.log('PASS six catalogs, unknown APR preserved, chain isolation, rate units, source failure isolation, receipt verification, no duplicate Morpho vaults, distinct CL positions');
 
+const registry=await import('../lib/earn-contracts.js');
+const fallback=vm.createContext({CHAIN:4663,addr:v=>/^0x[0-9a-f]{40}$/i.test(String(v))?v.toLowerCase():null,number:v=>v==null?null:Number(v),json:async()=>{throw Error('HTTP 403')},cached:async(k,fn)=>fn(),earnContracts:registry.earnContracts});
+vm.runInContext(fs.readFileSync('lib/protocol-markets.js','utf8').replace(/^import .*;$/gm,'').replaceAll('export ',''),fallback);
+const blocked=await vm.runInContext("protocolCatalog('earn')",fallback);assert(blocked.catalogPartial);assert.equal(blocked.markets.length,registry.earnContracts.length);assert(blocked.markets.every(m=>m.rate===null&&m.tvlUsd===null&&m.contract));
+console.log('PASS blocked EARN API preserves contract discovery without stale financial figures');
+
