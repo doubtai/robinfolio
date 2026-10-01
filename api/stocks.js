@@ -1,5 +1,6 @@
 const addressPattern=/^0x[\da-f]{40}$/i;
 const featured=['NVDA','AAPL','GOOGL','SPCX','MSFT','AMZN','META','TSLA'];
+const companyDomains={NVDA:'nvidia.com',AAPL:'apple.com',GOOGL:'google.com',SPCX:'spacex.com',MSFT:'microsoft.com',AMZN:'amazon.com',META:'meta.com',TSLA:'tesla.com'};
 let cached=null;
 async function read(url,options={}){
   const response=await fetch(url,{...options,signal:AbortSignal.timeout(10000)});
@@ -18,7 +19,7 @@ export default async function handler(req,res){
       cached={at:Date.now(),items};
     }
     let partial=false;
-    const items=cached.items.map(item=>({...item,logo:'https://cdn.robinhood.com/ncw_assets/logos/'+item.contract.toLowerCase()+'.png',balance:null}));
+    const items=cached.items.map(item=>({...item,logo:'https://www.google.com/s2/favicons?domain='+companyDomains[item.symbol]+'&sz=128',balance:null}));
     if(address&&items.length){
       const endpoint=process.env.ALCHEMY_ROBINHOOD_RPC_URL;
       if(!endpoint){partial=true;}else{
