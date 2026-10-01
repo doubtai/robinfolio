@@ -82,3 +82,22 @@
 @media(max-width:1150px){.app-header{grid-template-columns:1fr auto;gap:0 18px;padding:14px 22px 0}.app-header .wordmark{font-size:22px}.app-header .top-actions{grid-column:2;grid-row:1}.app-header .network span{display:inline}.app-header .network i{margin-right:6px}#app-nav{grid-column:1/-1;grid-row:2;justify-content:flex-start;overflow-x:auto;padding:12px 0 11px;scrollbar-width:thin;scrollbar-color:rgba(121,196,143,.2) transparent}#app-nav a{flex:none;padding:0 12px;min-height:39px}}
 @media(max-width:760px){.app-header{padding:12px 15px 0}.app-header .wordmark{font-size:21px}.app-header .wordmark img{width:29px}.app-header .network{display:none}.app-header .connect{height:36px}#app-nav{gap:4px;padding:11px 0 9px}#app-nav a{font-size:11px;padding:0 10px}#app-nav a svg{width:18px;height:18px}.wallet-panel{padding:22px}.wallet-form-controls{flex-direction:column}.wallet-form-controls input{flex:auto}.tracked-wallet{flex-direction:column;gap:12px}}
 @media(prefers-reduced-motion:reduce){#app-nav a,#app-nav a svg{transition:none}}
+
+/* Use the space released by the sidebar, prioritizing the position column. */
+.page:has(>.overview-head){max-width:none;padding-inline:clamp(20px,2vw,40px)}
+@media(min-width:1101px){
+ .overview-columns{grid-template-columns:minmax(0,1.38fr) minmax(420px,1fr);gap:20px;align-items:stretch}
+ .overview-left,.overview-right,.overview-right>.defi-column{gap:20px}
+ .overview-left>.asset-lists{flex:1;min-height:410px}
+ .overview-right>.defi-column{flex:1}
+ .overview-right .compact-card{padding:26px}
+ .overview-right .defi-card{display:flex;flex-direction:column;flex:1;min-height:560px}
+ .overview-right .defi-position-scroll{flex:1;min-height:0;max-height:clamp(430px,52vh,600px)}
+ .overview-right .defi-coverage-link{margin-top:16px}
+ .overview-right .compact-card:not(.defi-card){display:flex;flex-direction:column;min-height:280px;flex:0 0 280px}
+ .overview-right .dashboard-empty{flex:1;padding:30px;max-width:560px;align-self:center}
+ .overview-right .card-head h2{font-size:19px}
+ .overview-right .defi-position{font-size:13px}
+ .overview-right .defi-position small{font-size:11px}
+}
+@media(max-width:760px){.page:has(>.overview-head){padding-inline:15px}}
