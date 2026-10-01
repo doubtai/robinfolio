@@ -6,25 +6,45 @@
 .asset-lists{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}.asset-list{padding:20px;min-width:0}.asset-list-scroll{max-height:580px;overflow:auto}.asset-list .data-table{table-layout:fixed;min-width:0}.asset-list th:first-child{width:52%}.asset-list th:nth-child(2){width:27%}.asset-list td{overflow-wrap:anywhere;font-size:12px}.asset-list .asset-cell{min-width:0;align-items:center}.asset-list .asset-cell>span:last-child{min-width:0}.asset-name{color:var(--text);font-weight:600;text-decoration:none}.token-avatar{width:34px;height:34px;min-width:34px;border-radius:50%;background:#20392a;position:relative;display:grid;place-items:center;overflow:hidden;color:#c7f5ce;font-size:11px}.token-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#15241b}.token-balance{font-variant-numeric:tabular-nums}.dashboard-grid>.defi-column{grid-column:2;grid-template-columns:1fr}.mini-donut b{font-size:16px}.allocation-retry{background:none;border:0;cursor:pointer}@media(max-width:760px){.asset-lists,.dashboard-grid>.defi-column{grid-template-columns:1fr}.asset-list .data-table{min-width:0}.asset-list-scroll{max-height:480px}}
 
 /* Overview keeps the two compact asset lists inside the original left column. */
-.dashboard-grid>.asset-lists{grid-column:1;grid-row:2;min-width:0;gap:0;height:410px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,var(--panel),rgba(7,17,11,.72));overflow:hidden}
-.dashboard-grid>.asset-lists>.asset-list{padding:14px 10px;border:0;border-radius:0;background:transparent;box-shadow:none;display:flex;flex-direction:column;min-height:0;margin:0}
-.dashboard-grid>.asset-lists>.asset-list+ .asset-list{border-left:1px solid var(--line)}
-.dashboard-grid>.asset-lists .card-head{gap:5px;align-items:start;min-height:32px}
-.dashboard-grid>.asset-lists h2{font-size:12px;line-height:1.4}
-.dashboard-grid>.asset-lists .card-head small{font-size:9px;white-space:nowrap}
-.dashboard-grid>.asset-lists p{font-size:10px;line-height:1.4;margin:4px 0 10px;min-height:28px}
-.dashboard-grid>.asset-lists .asset-list-scroll{flex:1;min-height:0;max-height:none;overflow:auto;scrollbar-width:thin}
-.dashboard-grid>.asset-lists .data-table{margin-top:0}
-.dashboard-grid>.asset-lists th{font-size:8px;padding:4px 3px 8px;position:sticky;top:0;background:#0c1a11;z-index:1}
-.dashboard-grid>.asset-lists td{font-size:10px;padding:9px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dashboard-grid>.asset-lists .asset-cell{gap:6px}
-.dashboard-grid>.asset-lists .asset-cell small{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.dashboard-grid>.asset-lists .token-avatar{width:23px;height:23px;min-width:23px;font-size:8px}
+.overview-left>.asset-lists{grid-column:1;grid-row:2;min-width:0;gap:0;height:410px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,var(--panel),rgba(7,17,11,.72));overflow:hidden}
+.overview-left>.asset-lists>.asset-list{padding:14px 10px;border:0;border-radius:0;background:transparent;box-shadow:none;display:flex;flex-direction:column;min-height:0;margin:0}
+.overview-left>.asset-lists>.asset-list+ .asset-list{border-left:1px solid var(--line)}
+.overview-left>.asset-lists .card-head{gap:5px;align-items:start;min-height:32px}
+.overview-left>.asset-lists h2{font-size:12px;line-height:1.4}
+.overview-left>.asset-lists .card-head small{font-size:9px;white-space:nowrap}
+.overview-left>.asset-lists p{font-size:10px;line-height:1.4;margin:4px 0 10px;min-height:28px}
+.overview-left>.asset-lists .asset-list-scroll{flex:1;min-height:0;max-height:none;overflow:auto;scrollbar-width:thin}
+.overview-left>.asset-lists .data-table{margin-top:0}
+.overview-left>.asset-lists th{font-size:8px;padding:4px 3px 8px;position:sticky;top:0;background:#0c1a11;z-index:1}
+.overview-left>.asset-lists td{font-size:10px;padding:9px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.overview-left>.asset-lists .asset-cell{gap:6px}
+.overview-left>.asset-lists .asset-cell small{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.overview-left>.asset-lists .token-avatar{width:23px;height:23px;min-width:23px;font-size:8px}
 .dashboard-grid>.defi-column{grid-row:2}
-@media(max-width:1100px){.dashboard-grid>.asset-lists,.dashboard-grid>.defi-column{grid-column:1;grid-row:auto}}
-@media(max-width:760px){.dashboard-grid>.asset-lists{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);height:410px}.dashboard-grid>.defi-column{grid-template-columns:1fr}}
+@media(max-width:1100px){.overview-left>.asset-lists,.dashboard-grid>.defi-column{grid-column:1;grid-row:auto}}
+@media(max-width:760px){.overview-left>.asset-lists{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);height:410px}.dashboard-grid>.defi-column{grid-template-columns:1fr}}
 
 .defi-position-scroll{max-height:250px;overflow:auto}.defi-position{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:12px}.defi-position small{display:block;color:var(--muted);margin-top:4px}.defi-position strong{white-space:nowrap}.defi-coverage{margin-top:20px;font-size:12px}.defi-coverage p{display:flex;justify-content:space-between;gap:16px}.defi-coverage span{color:var(--muted)}
 
 .protocol-catalog{padding:20px;margin-top:18px}.protocol-directory{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 20px}.protocol-directory a{display:flex;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);font-size:12px;text-decoration:none}.protocol-directory span{color:var(--muted)}@media(max-width:760px){.protocol-directory{grid-template-columns:1fr}}
+
+/* Overview columns flow independently: allocation no longer stretches to chart height. */
+.overview-left,.overview-right{min-width:0;display:flex;flex-direction:column;gap:14px}
+.overview-left>.asset-lists{flex:none}.overview-right>.allocation{flex:none}.overview-right>.defi-column{display:flex;flex-direction:column;gap:14px;min-width:0}
+.overview-head{display:grid;grid-template-columns:minmax(360px,1.2fr) minmax(240px,1fr) auto;gap:24px;align-items:center}
+.overview-head .wallet-context{align-self:end;white-space:nowrap}.overview-head p{line-height:1.55}
+.protocol-ticker{min-width:0;outline-offset:5px;border-radius:5px;padding:4px 0}
+.protocol-ticker:focus-visible{outline:1px solid var(--green)}
+.protocol-ticker-title{display:block;font-size:10px;font-weight:500;letter-spacing:.07em;color:#8d9f93;margin:0 0 13px 10px}
+.protocol-ticker-window{overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.protocol-ticker-track{display:flex;width:max-content;animation:protocol-drift 48s linear infinite;will-change:transform}
+.protocol-ticker-group{display:flex;align-items:center;gap:27px;padding-right:27px}
+.protocol-brand{display:flex;align-items:center;gap:8px;white-space:nowrap;font-size:12px;color:#b4c2b8}
+.protocol-brand img{display:block;border-radius:50%;object-fit:contain;filter:saturate(.75);background:rgba(255,255,255,.035)}
+.protocol-ticker:hover .protocol-ticker-track,.protocol-ticker:focus-within .protocol-ticker-track{animation-play-state:paused}
+@keyframes protocol-drift{to{transform:translateX(-50%)}}
+@media(max-width:1350px){.overview-head{grid-template-columns:minmax(0,1fr) minmax(230px,.8fr);gap:12px 28px}.overview-head .wallet-context{grid-column:1/-1;text-align:right}}
+@media(max-width:1100px){.overview-columns{grid-template-columns:minmax(0,1fr)}.overview-right{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}.overview-right .allocation-wrap{grid-template-columns:125px minmax(0,1fr)}.overview-right .mini-donut:after{inset:27px}}
+@media(max-width:760px){.overview-head{grid-template-columns:minmax(0,1fr);gap:18px}.overview-head .wallet-context{text-align:left;margin:0}.protocol-ticker{max-width:100%}.overview-columns{display:flex;flex-direction:column}.overview-right{display:flex}.overview-columns .glass,.overview-columns .defi-column{margin-bottom:0}.overview-right .allocation-wrap{grid-template-columns:140px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){.protocol-ticker-track{animation:none;transform:none;will-change:auto}.protocol-ticker-group+ .protocol-ticker-group{display:none}.protocol-ticker-window{overflow-x:auto;mask-image:none}.protocol-ticker-group{gap:20px;padding:2px 0 7px}}
 
