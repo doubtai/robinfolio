@@ -12,7 +12,7 @@ export default async function handler(req,res){
     if(!Array.isArray(rows))throw new Error('Invalid response');
     const unique=new Map();let partial=false;const rejected={chain:0,wallet:0};
     for(const row of rows){
-      if(Number(row.chain_id)!==4663){partial=true;rejected.chain++;continue;}
+      if(Number(row.chain_id??row.chain)!==4663){partial=true;rejected.chain++;continue;}
       if(String(row.address).toLowerCase()!==address){partial=true;rejected.wallet++;continue;}
       if(row.status!==1||row.asset_sign!==1)continue;
       const contract=String(row.contract_address||'').toLowerCase();
