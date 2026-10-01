@@ -18,7 +18,7 @@ export default async function handler(req,res){
       cached={at:Date.now(),items};
     }
     let partial=false;
-    const items=cached.items.map(item=>({...item,balance:null}));
+    const items=cached.items.map(item=>({...item,logo:'https://cdn.robinhood.com/ncw_assets/logos/'+item.contract.toLowerCase()+'.png',balance:null}));
     if(address&&items.length){
       const endpoint=process.env.ALCHEMY_ROBINHOOD_RPC_URL;
       if(!endpoint){partial=true;}else{
