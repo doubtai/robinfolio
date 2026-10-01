@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Robinfolio portfolio overview for Robinhood Chain."><title>Robinfolio · Portfolio overview</title><link rel="icon" href="/mark.svg" type="image/svg+xml"><link rel="stylesheet" href="/app.css"></head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="wordmark" href="/"><img src="/mark.svg" alt=""><span>robinfolio</span></a>
+      <nav id="app-nav"><a class="active" href="#overview" data-view="overview"><i>▥</i>Overview</a><a href="#assets" data-view="assets"><i>◔</i>Assets</a><a href="#markets" data-view="markets"><i>▥</i>Tokenized Markets</a><a href="#defi" data-view="defi"><i>◇</i>DeFi</a><a href="#swap" data-view="swap"><i>⇄</i>Swap</a><a href="#activity" data-view="activity"><i>▤</i>Activity</a><a href="#nfts" data-view="nfts"><i>▧</i>NFTs</a><a href="#wallets" data-view="wallets"><i>▣</i>Wallets</a></nav>
+      <a class="chain-card" href="https://robin.etherscan.io/" target="_blank" rel="noreferrer"><img src="/mark.svg" alt=""><span><b>Robinhood Chain</b><small>Network live</small></span><b>↗</b></a>
+    </aside>
+    <div class="workspace">
+      <header class="topbar"><label class="search"><span>⌕</span><input id="address-input" placeholder="Search an asset or enter a wallet address"></label><div class="top-actions"><span class="network"><i></i> Robinhood Chain</span><button id="connect-wallet" class="connect">Connect wallet</button></div></header>
+      <main id="main-content"></main>
+    </div>
+  </div>
+  <script type="module" src="/app.js"></script>
+</body></html>
+
