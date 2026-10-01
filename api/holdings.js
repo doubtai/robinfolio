@@ -1,6 +1,30 @@
 const addressPattern=/^0x[\da-f]{40}$/i;
 const uintPattern=/^0x[\da-f]+$/i;
 const text=value=>String(value??'').slice(0,160);
+let stockCache=null,stockPromise=null;
+async function stockContracts(){
+  if(stockCache&&Date.now()-stockCache.time<3600000)return stockCache.contracts;
+  if(stockPromise)return stockPromise;
+  stockPromise=(async()=>{
+    const data=await json('https://api.robinhood.com/rhj/assets');
+    if(!Array.isArray(data.assets))throw new Error('invalid_response');
+    const contracts=new Set(data.assets.flatMap(asset=>(asset.deployments||[]).filter(d=>d.chainId===4663&&addressPattern.test(d.contractAddress)).map(d=>d.contractAddress.toLowerCase())));
+    stockCache={time:Date.now(),contracts};return contracts;
+  })();
+  try{return await stockPromise;}finally{stockPromise=null;}
+}
+// Canonical factories and tuple ABI: https://docs.ponsfamily.com/#contracts
+const ponsFactories=['0xA5aAb3F0c6EeadF30Ef1D3Eb997108E976351feB','0x0c37a24F5D23A486FA692d1500881d698B1F77a4'];
+async function origin(endpoint,contract,stocks){
+  if(stocks?.has(contract.toLowerCase()))return 'Robinhood Stock Token';
+  const checks=await Promise.allSettled(ponsFactories.map(to=>rpc(endpoint,'eth_call',[{to,data:'0x3cf28b5a'+contract.slice(2).toLowerCase().padStart(64,'0')},'latest'])));
+  for(const check of checks){
+    if(check.status!=='fulfilled'||!/^0x[\da-f]{832}$/i.test(check.value))continue;
+    const words=check.value.slice(2).match(/.{64}/g);
+    if(words[0].slice(24).toLowerCase()===contract.slice(2).toLowerCase()&&BigInt('0x'+words[11])===1n)return 'pons launch';
+  }
+  return null;
+}
 function units(raw,decimals){
   if(!Number.isInteger(decimals)||decimals<0||decimals>255)return null;
   const digits=BigInt(raw).toString().padStart(decimals+1,'0');
@@ -31,6 +55,7 @@ export default async function handler(request,response){
     if(root.protocol!=='https:'||root.hostname!=='robinhood-mainnet.g.alchemy.com'||!/^\/v2\/[^/]+$/.test(root.pathname))throw new Error('configuration_error');
     let items=[],nextPageKey=null,partial=false;
     if(kind==='tokens'){
+      const stocks=await stockContracts().catch(()=>null);
       const data=await rpc(endpoint,'alchemy_getTokenBalances',[address,'erc20',{maxCount:8,...(pageKey?{pageKey}:{})}]);
       if(!Array.isArray(data.tokenBalances))throw new Error('invalid_response');
       nextPageKey=data.pageKey||null;
@@ -39,8 +64,11 @@ export default async function handler(request,response){
       if(balances.length>8)throw new Error('invalid_response');
       for(let index=0;index<balances.length;index+=4){
         items.push(...await Promise.all(balances.slice(index,index+4).map(async token=>{
-          let metadata={};try{metadata=await rpc(endpoint,'alchemy_getTokenMetadata',[token.contractAddress]);}catch{partial=true;}
-          return {contract:token.contractAddress,name:text(metadata.name||'Unknown token'),symbol:text(metadata.symbol||'ERC-20'),balanceRaw:token.tokenBalance,decimals:Number.isInteger(metadata.decimals)?metadata.decimals:null,balance:units(token.tokenBalance,metadata.decimals)};
+          const [metadata,verifiedOrigin]=await Promise.all([
+            rpc(endpoint,'alchemy_getTokenMetadata',[token.contractAddress]).catch(()=>{partial=true;return {};}),
+            origin(endpoint,token.contractAddress,stocks)
+          ]);
+          return {contract:token.contractAddress,name:text(metadata.name||'Unknown token'),symbol:text(metadata.symbol||'ERC-20'),balanceRaw:token.tokenBalance,decimals:Number.isInteger(metadata.decimals)?metadata.decimals:null,balance:units(token.tokenBalance,metadata.decimals),verifiedOrigin};
         })));
       }
     }else{
