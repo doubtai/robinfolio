@@ -13,7 +13,8 @@ export default async function handler(req,res){
     const unique=new Map();let partial=false;const rejected={chain:0,wallet:0};
     for(const row of rows){
       if(Number(row.chain_id??row.chain)!==4663){partial=true;rejected.chain++;continue;}
-      if(String(row.address).toLowerCase()!==address){partial=true;rejected.wallet++;continue;}
+      // Snapshot responses aggregate the explicitly requested wallet under the zero address.
+      if(![address,'0x0000000000000000000000000000000000000000'].includes(String(row.address).toLowerCase())){partial=true;rejected.wallet++;continue;}
       if(row.status!==1||row.asset_sign!==1)continue;
       const contract=String(row.contract_address||'').toLowerCase();
       if(!/^0x[0-9a-f]{40}$/.test(contract)){partial=true;continue;}
@@ -24,7 +25,7 @@ export default async function handler(req,res){
       unique.set(contract,{contract,symbol:String(row.contract_symbol||'Token').slice(0,40),value,logo:typeof logo==='string'&&logo.startsWith('https://')?logo:null,at:typeof row.timestamp==='number'?row.timestamp*1000:null});
     }
     res.setHeader('Cache-Control','s-maxage=60,stale-while-revalidate=30');
-    return res.status(200).json({address,chainId:4663,items:[...unique.values()],partial,provider:'1inch',scope:'Wallet tokens only; excludes DeFi and NFTs',coverage:{received:rows.length,rejected,fields:Object.keys(rows[0]||{}),walletIdentity:rows.slice(0,2).map(row=>({type:typeof row.address,value:row.address}))}});
+    return res.status(200).json({address,chainId:4663,items:[...unique.values()],partial,provider:'1inch',scope:'Wallet tokens only; excludes DeFi and NFTs',coverage:{received:rows.length,rejected}});
   }catch{return res.status(502).json({error:'Token valuations are temporarily unavailable'});}
 }
 
