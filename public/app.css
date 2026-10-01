@@ -88,7 +88,7 @@
 @media(min-width:1101px){
  .overview-columns{grid-template-columns:minmax(0,1.38fr) minmax(420px,1fr);gap:20px;align-items:stretch}
  .overview-left,.overview-right,.overview-right>.defi-column{gap:20px}
- .overview-left>.asset-lists{flex:1;min-height:410px}
+ .overview-left>.asset-lists{flex:none;height:450px;min-height:0}
  .overview-right>.defi-column{flex:1}
  .overview-right .compact-card{padding:26px}
  .overview-right .defi-card{display:flex;flex-direction:column;flex:1;min-height:560px}
