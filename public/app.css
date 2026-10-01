@@ -26,3 +26,5 @@
 
 .defi-position-scroll{max-height:250px;overflow:auto}.defi-position{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:12px}.defi-position small{display:block;color:var(--muted);margin-top:4px}.defi-position strong{white-space:nowrap}.defi-coverage{margin-top:20px;font-size:12px}.defi-coverage p{display:flex;justify-content:space-between;gap:16px}.defi-coverage span{color:var(--muted)}
 
+.protocol-catalog{padding:20px;margin-top:18px}.protocol-directory{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 20px}.protocol-directory a{display:flex;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);font-size:12px;text-decoration:none}.protocol-directory span{color:var(--muted)}@media(max-width:760px){.protocol-directory{grid-template-columns:1fr}}
+
