@@ -8,7 +8,7 @@ function units(raw,decimals){
 }
 async function json(url,options={}){
   const response=await fetch(url,{...options,signal:AbortSignal.timeout(10000)});
-  if(!response.ok)throw new Error(response.status===429?'rate_limited':'provider_unavailable');
+  if(!response.ok)throw new Error(({400:'provider_rejected_request',401:'provider_unauthorized',403:'provider_forbidden',404:'provider_endpoint_unavailable',429:'rate_limited'})[response.status]||'provider_unavailable');
   const result=await response.json();
   if(result.error)throw new Error('provider_unavailable');
   return result;
@@ -56,7 +56,7 @@ export default async function handler(request,response){
     response.setHeader('Cache-Control','s-maxage=20,stale-while-revalidate=20');
     return response.status(200).json({address,kind,status:'available',provider:'Alchemy',items,nextPageKey,partial});
   }catch(error){
-    const reason=['rate_limited','configuration_error','invalid_response'].includes(error.message)?error.message:'provider_unavailable';
+    const reason=['rate_limited','configuration_error','invalid_response','provider_rejected_request','provider_unauthorized','provider_forbidden','provider_endpoint_unavailable'].includes(error.message)?error.message:'provider_unavailable';
     return response.status(502).json({status:'unavailable',reason,error:'Asset data is temporarily unavailable'});
   }
 }
