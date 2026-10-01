@@ -24,7 +24,7 @@ export default async function handler(req,res){
       unique.set(contract,{contract,symbol:String(row.contract_symbol||'Token').slice(0,40),value,logo:typeof logo==='string'&&logo.startsWith('https://')?logo:null,at:typeof row.timestamp==='number'?row.timestamp*1000:null});
     }
     res.setHeader('Cache-Control','s-maxage=60,stale-while-revalidate=30');
-    return res.status(200).json({address,chainId:4663,items:[...unique.values()],partial,provider:'1inch',scope:'Wallet tokens only; excludes DeFi and NFTs',coverage:{received:rows.length,rejected,fields:Object.keys(rows[0]||{})}});
+    return res.status(200).json({address,chainId:4663,items:[...unique.values()],partial,provider:'1inch',scope:'Wallet tokens only; excludes DeFi and NFTs',coverage:{received:rows.length,rejected,fields:Object.keys(rows[0]||{}),walletIdentity:rows.slice(0,2).map(row=>({type:typeof row.address,value:row.address}))}});
   }catch{return res.status(502).json({error:'Token valuations are temporarily unavailable'});}
 }
 
