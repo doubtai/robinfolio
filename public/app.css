@@ -48,3 +48,20 @@
 @media(max-width:760px){.overview-head{grid-template-columns:minmax(0,1fr);gap:18px}.overview-head .wallet-context{text-align:left;margin:0}.protocol-ticker{max-width:100%}.overview-columns{display:flex;flex-direction:column}.overview-right{display:flex}.overview-columns .glass,.overview-columns .defi-column{margin-bottom:0}.overview-right .allocation-wrap{grid-template-columns:140px minmax(0,1fr)}}
 @media(prefers-reduced-motion:reduce){.protocol-ticker-track{animation:none;transform:none;will-change:auto}.protocol-ticker-group+ .protocol-ticker-group{display:none}.protocol-ticker-window{overflow-x:auto;mask-image:none}.protocol-ticker-group{gap:20px;padding:2px 0 7px}}
 
+/* Compact position rows; quantities and valuation details expand on request. */
+.defi-card>p[role=status]{font-size:11px;margin:12px 0 8px}
+.defi-position-scroll{max-height:380px;overflow:auto;scrollbar-width:thin}
+.defi-position{display:block;padding:0;font-size:12px}
+.defi-position summary{display:flex;align-items:center;gap:9px;min-height:62px;padding:10px 0;cursor:pointer;list-style:none}
+.defi-position summary::-webkit-details-marker{display:none}
+.defi-position summary:focus-visible{outline:1px solid var(--green);outline-offset:2px;border-radius:4px}
+.defi-position-label{flex:1;min-width:0}.defi-position-label b{font-weight:500;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.defi-position small{font-size:10px;line-height:1.4;margin-top:4px}
+.defi-position-label small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.defi-position-value{text-align:right;flex:none;font-variant-numeric:tabular-nums}.defi-position-value strong{font-weight:600}
+.defi-chevron{color:var(--muted);font-size:12px}.defi-position[open] .defi-chevron{transform:rotate(180deg)}
+.defi-position-details{padding:4px 0 12px;font-size:10px;color:var(--muted)}.defi-position-details>div{display:flex;justify-content:space-between;gap:12px;padding:3px 0}.defi-position-details p{margin:7px 0 0;line-height:1.5}
+.defi-coverage-link{display:block;margin-top:13px;font-size:10px;text-decoration:none;color:var(--muted)}.defi-coverage-link:hover{color:var(--green)}
+.overview-right{display:flex}.overview-right .defi-card{min-height:250px}.sidebar nav i{flex:none;display:grid;place-items:center}
+.opportunities-empty{min-height:300px;padding:clamp(28px,6vw,70px);display:flex;flex-direction:column;justify-content:center}.opportunities-status{color:var(--green);font-size:11px;letter-spacing:.06em}.opportunities-empty h2{font:500 26px Manrope;letter-spacing:-.03em;margin:16px 0 12px}.opportunities-empty p{max-width:570px;color:var(--muted);line-height:1.7;margin:0}
+
