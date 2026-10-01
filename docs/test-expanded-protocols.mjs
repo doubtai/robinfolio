@@ -5,7 +5,7 @@ const contract='0x'+'1'.repeat(40), wallet='0x'+'2'.repeat(40);
 process.env.ALCHEMY_ROBINHOOD_RPC_URL='https://rpc.test';
 globalThis.fetch=async(url,options={})=>{
  let d;
- if(url==='https://rpc.test') {const request=JSON.parse(options.body);d={result:request.method==='alchemy_getTokenBalances'?{tokenBalances:[{contractAddress:contract,tokenBalance:'0x01'}]}:'0x01'};}
+ if(url==='https://rpc.test') {const request=JSON.parse(options.body);d={result:request.method==='alchemy_getTokenBalances'?{tokenBalances:[{contractAddress:contract,tokenBalance:'0x01'}]}:'0x'+'0'.repeat(63)+'1'};}
  else if(url.includes('topology'))d={farms:[{vault:contract,farm:contract}]};
  else if(url.includes('fables.fi'))d=options.method==='POST'?{data:{Position:[]}}:{data:{Pool:[{id:'0x'+'1'.repeat(64)}]}};
  else if(url.includes('all-pools'))d={pools:[{id:contract,symbol:'ETH/USDG',lpApr:5,isCl:false}]};
@@ -34,4 +34,3 @@ const fallback=vm.createContext({CHAIN:4663,addr:v=>/^0x[0-9a-f]{40}$/i.test(Str
 vm.runInContext(fs.readFileSync('lib/protocol-markets.js','utf8').replace(/^import .*;$/gm,'').replaceAll('export ',''),fallback);
 const blocked=await vm.runInContext("protocolCatalog('earn')",fallback);assert(blocked.catalogPartial);assert.equal(blocked.markets.length,registry.earnContracts.length);assert(blocked.markets.every(m=>m.rate===null&&m.tvlUsd===null&&m.contract));
 console.log('PASS blocked EARN API preserves contract discovery without stale financial figures');
-
