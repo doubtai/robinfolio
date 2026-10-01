@@ -6,7 +6,7 @@ const element={addEventListener(){},classList:{toggle(){}},innerHTML:''};
 const ctx=vm.createContext({document:{querySelector:()=>element,querySelectorAll:()=>[]},window:{addEventListener(){}},location:{hash:'#overview'},URLSearchParams,AbortSignal,Intl,console});
 vm.runInContext(source,ctx);
 for(const text of ['124,530','AAPLx','Rialto','12.48%','demoAssets'])assert(!source.includes(text));
-for(const title of ['Portfolio value','Asset allocation','Tokenized stocks and tokens','DeFi positions','Market insight'])assert(element.innerHTML.includes(title));
+for(const title of ['Portfolio value','Asset allocation','Verified stock tokens','Wallet tokens','DeFi positions','Market insight'])assert(element.innerHTML.includes(title));
 assert(!element.innerHTML.includes('<path'));assert(!element.innerHTML.includes('$'));
 vm.runInContext("account='0x'+'1'.repeat(40);historyData={points:[{at:1000,value:10},{at:2000,value:20}],partial:false};render()",ctx);assert(element.innerHTML.includes('$20.00'));assert(element.innerHTML.includes('Indexed portfolio'));assert(!element.innerHTML.includes('profit'));
 vm.runInContext("account='';render()",ctx);assert(!element.innerHTML.includes('$20.00'));assert(!element.innerHTML.includes('<path'));
