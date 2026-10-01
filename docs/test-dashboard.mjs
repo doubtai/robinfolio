@@ -6,7 +6,7 @@ const element={addEventListener(){},classList:{toggle(){}},innerHTML:''};
 const ctx=vm.createContext({document:{querySelector:()=>element,querySelectorAll:()=>[]},window:{addEventListener(){}},location:{hash:'#overview'},URLSearchParams,AbortSignal,Intl,console});
 vm.runInContext(source,ctx);
 for(const text of ['124,530','AAPLx','Rialto','12.48%','demoAssets'])assert(!source.includes(text));
-for(const title of ['Portfolio value','Asset allocation','Verified stock tokens','Wallet tokens','DeFi positions','Market insight'])assert(element.innerHTML.includes(title));
+for(const title of ['Portfolio value','Verified stock tokens','Wallet tokens','DeFi positions','Market insight'])assert(element.innerHTML.includes(title));
 assert(!element.innerHTML.includes('<path'));assert(!element.innerHTML.includes('$'));
 vm.runInContext("account='0x'+'1'.repeat(40);historyData={points:[{at:1000,value:10},{at:2000,value:20}],partial:false};render()",ctx);assert(element.innerHTML.includes('$20.00'));assert(element.innerHTML.includes('Indexed portfolio'));assert(!element.innerHTML.includes('profit'));
 vm.runInContext("account='';render()",ctx);assert(!element.innerHTML.includes('$20.00'));assert(!element.innerHTML.includes('<path'));
@@ -17,4 +17,8 @@ const backend=vm.createContext({URLSearchParams,AbortSignal,process:{env:{ONEINC
 await vm.runInContext("handler({method:'GET',query:{address:'0x'+'1'.repeat(40),period:'1month'}},res)",backend);assert.equal(status,200);assert.equal(output.points.length,2);assert.equal(output.points[0].value,0);assert.equal(output.points[1].value,7);assert(output.partial);assert(requestUrl.includes('chain_id=4663'));assert(!JSON.stringify(output).includes('test-secret'));
 backend.process.env.ONEINCH_API_KEY='';await vm.runInContext("handler({method:'GET',query:{address:'0x'+'1'.repeat(40)}},res)",backend);assert.equal(status,503);assert.equal(output.code,'HISTORY_NOT_CONFIGURED');
 console.log('PASS history chain filter, sorting, deduplication, invalid values, quality flag, missing credential');
+
+assert(!element.innerHTML.includes('Asset allocation'));
+vm.runInContext("view='opportunities';render()",ctx);assert(element.innerHTML.includes('Market opportunities'));assert(element.innerHTML.includes('Coming next'));assert(!element.innerHTML.includes('APY'));assert(!source.toLowerCase().includes('aave'));
+console.log('PASS allocation removed, opportunities route is placeholder only, Aave absent');
 
