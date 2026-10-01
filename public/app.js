@@ -20,7 +20,7 @@ async function loadAllocation(){
 }
 function walletAssets(){
   const map=new Map(featuredStocks.map(item=>[item.contract.toLowerCase(),{...item,balance:account?item.balance:null}]));
-  if(account)for(const item of holdings.tokens?.items||[]){const key=item.contract.toLowerCase();map.set(key,{...map.get(key),...item,logo:item.logo||map.get(key)?.logo,verifiedOrigin:map.get(key)?.verifiedOrigin||item.verifiedOrigin});}
+  if(account)for(const item of holdings.tokens?.items||[]){const key=item.contract.toLowerCase();map.set(key,{...map.get(key),...item,logo:map.get(key)?.logo||item.logo,verifiedOrigin:map.get(key)?.verifiedOrigin||item.verifiedOrigin});}
   const items=[...map.values()];
   if(account&&liveData?.nativeBalanceRaw!=null)items.push({native:true,contract:NATIVE,symbol:'ETH',name:'Ether',balance:nativeUnits(liveData.nativeBalanceRaw),verifiedOrigin:'Native asset',logo:'/eth.svg'});
   return items;
