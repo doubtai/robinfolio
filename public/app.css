@@ -3,5 +3,24 @@
 
 .chart-empty{height:190px;display:grid;place-items:center;text-align:center;color:#8a978e;background:linear-gradient(rgba(172,219,183,.035) 1px,transparent 1px);background-size:100% 25%;padding:24px}.chart-axis{display:flex;justify-content:space-between;gap:10px;color:#8a978e;font-size:10px}.dashboard-empty{min-height:110px;display:grid;place-items:center;color:#8a978e;line-height:1.7;text-align:center;padding:24px}.chart-periods button:disabled{opacity:.45;cursor:default}.history-retry{margin-top:12px;border:0;background:transparent;cursor:pointer}.assets-card{min-width:0;overflow-x:auto}
 
-.asset-lists{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}.asset-list{padding:20px;min-width:0}.asset-list-scroll{max-height:580px;overflow:auto}.asset-list .data-table{table-layout:fixed;min-width:0}.asset-list th:first-child{width:52%}.asset-list th:nth-child(2){width:27%}.asset-list td{overflow-wrap:anywhere;font-size:12px}.asset-list .asset-cell{min-width:0;align-items:center}.asset-list .asset-cell>span:last-child{min-width:0}.asset-name{color:var(--text);font-weight:600;text-decoration:none}.token-avatar{width:34px;height:34px;min-width:34px;border-radius:50%;background:#20392a;position:relative;display:grid;place-items:center;overflow:hidden;color:#c7f5ce;font-size:11px}.token-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#15241b}.token-balance{font-variant-numeric:tabular-nums}.dashboard-grid>.defi-column{grid-column:1/-1;grid-template-columns:1fr 1fr}.mini-donut b{font-size:16px}.allocation-retry{background:none;border:0;cursor:pointer}@media(max-width:760px){.asset-lists,.dashboard-grid>.defi-column{grid-template-columns:1fr}.asset-list .data-table{min-width:0}.asset-list-scroll{max-height:480px}}
+.asset-lists{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}.asset-list{padding:20px;min-width:0}.asset-list-scroll{max-height:580px;overflow:auto}.asset-list .data-table{table-layout:fixed;min-width:0}.asset-list th:first-child{width:52%}.asset-list th:nth-child(2){width:27%}.asset-list td{overflow-wrap:anywhere;font-size:12px}.asset-list .asset-cell{min-width:0;align-items:center}.asset-list .asset-cell>span:last-child{min-width:0}.asset-name{color:var(--text);font-weight:600;text-decoration:none}.token-avatar{width:34px;height:34px;min-width:34px;border-radius:50%;background:#20392a;position:relative;display:grid;place-items:center;overflow:hidden;color:#c7f5ce;font-size:11px}.token-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#15241b}.token-balance{font-variant-numeric:tabular-nums}.dashboard-grid>.defi-column{grid-column:2;grid-template-columns:1fr}.mini-donut b{font-size:16px}.allocation-retry{background:none;border:0;cursor:pointer}@media(max-width:760px){.asset-lists,.dashboard-grid>.defi-column{grid-template-columns:1fr}.asset-list .data-table{min-width:0}.asset-list-scroll{max-height:480px}}
+
+/* Overview keeps the two compact asset lists inside the original left column. */
+.dashboard-grid>.asset-lists{grid-column:1;grid-row:2;min-width:0;gap:0;height:410px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,var(--panel),rgba(7,17,11,.72));overflow:hidden}
+.dashboard-grid>.asset-lists>.asset-list{padding:14px 10px;border:0;border-radius:0;background:transparent;box-shadow:none;display:flex;flex-direction:column;min-height:0;margin:0}
+.dashboard-grid>.asset-lists>.asset-list+ .asset-list{border-left:1px solid var(--line)}
+.dashboard-grid>.asset-lists .card-head{gap:5px;align-items:start;min-height:32px}
+.dashboard-grid>.asset-lists h2{font-size:12px;line-height:1.4}
+.dashboard-grid>.asset-lists .card-head small{font-size:9px;white-space:nowrap}
+.dashboard-grid>.asset-lists p{font-size:10px;line-height:1.4;margin:4px 0 10px;min-height:28px}
+.dashboard-grid>.asset-lists .asset-list-scroll{flex:1;min-height:0;max-height:none;overflow:auto;scrollbar-width:thin}
+.dashboard-grid>.asset-lists .data-table{margin-top:0}
+.dashboard-grid>.asset-lists th{font-size:8px;padding:4px 3px 8px;position:sticky;top:0;background:#0c1a11;z-index:1}
+.dashboard-grid>.asset-lists td{font-size:10px;padding:9px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dashboard-grid>.asset-lists .asset-cell{gap:6px}
+.dashboard-grid>.asset-lists .asset-cell small{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.dashboard-grid>.asset-lists .token-avatar{width:23px;height:23px;min-width:23px;font-size:8px}
+.dashboard-grid>.defi-column{grid-row:2}
+@media(max-width:1100px){.dashboard-grid>.asset-lists,.dashboard-grid>.defi-column{grid-column:1;grid-row:auto}}
+@media(max-width:760px){.dashboard-grid>.asset-lists{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);height:410px}.dashboard-grid>.defi-column{grid-template-columns:1fr}}
 
