@@ -141,9 +141,9 @@ function defiPositionRow(item){
  const qty=v=>new Intl.NumberFormat('en-US',{maximumSignificantDigits:6}).format(v);
  const parts=item.components||[];
  const label=item.value==null?'—':(item.estimated?'≈ ':'')+(item.side==='Debt'?'−':'')+money(item.value);
- const meta=[item.protocol,item.side,item.inRange===true?'In range':item.inRange===false?'Out of range':null,item.stale?'Delayed':null].filter(Boolean).join(' · ');
+ const meta=[item.protocol,item.side,item.rangeCount?item.rangeCount+' ranges':null,item.inRange===true?'In range':item.inRange===false?'Out of range':null,item.stale?'Delayed':null].filter(Boolean).join(' · ');
  const breakdown=parts.map((p,i)=>{const units=(Number(p.amountRaw)+Number(p.feesRaw||0))/10**p.decimals;const symbol=item.name.split(' / ')[i]||short(p.currency);return '<div><span>'+esc(qty(units)+' '+symbol)+'</span><span>'+esc(p.priceUsd==null?'Price unavailable':money(units*p.priceUsd))+'</span></div>';}).join('');
- const details=breakdown+'<p>'+esc(item.value==null?'USD valuation unavailable.':item.valuationSource||'Protocol-reported USD value')+(item.feesIncluded?' · Accrued fees included':item.feesIncluded===false?' · Accrued fees unavailable':'')+'</p>'+(item.tokenId?'<p>Position #'+esc(item.tokenId)+'</p>':'');
+ const details=breakdown+'<p>'+esc(item.value==null?'USD valuation unavailable.':item.valuationSource||'Protocol-reported USD value')+(item.feesIncluded?' · Accrued fees included':item.feesExcluded?' · Fees and deferred credits excluded':item.feesIncluded===false?' · Accrued fees unavailable':'')+'</p>'+(item.tokenIds?'<p>Position NFTs: '+item.tokenIds.map(esc).join(', ')+'</p>':item.tokenId?'<p>Position #'+esc(item.tokenId)+'</p>':'');
  return '<details class="defi-position"><summary><span class="defi-position-label"><b>'+esc(item.name)+'</b><small>'+esc(meta)+'</small></span><span class="defi-position-value"><strong>'+esc(label)+'</strong><small>'+(item.value==null?'Unpriced':item.feesIncluded?'Incl. fees':item.estimated?'Estimated':'USD')+'</small></span><span class="defi-chevron" aria-hidden="true">⌄</span></summary><div class="defi-position-details">'+details+'</div></details>';
 }
 function opportunitiesPage(){return '<section class="page"><div class="page-head"><div><h1>Market opportunities</h1><p>Discover liquidity pools, lending markets and vault yields on Robinhood Chain.</p></div></div><article class="glass opportunities-empty"><span class="opportunities-status">Coming next</span><h2>Your next opportunity, in one place.</h2><p>This space will bring together DeFi opportunities and highlight options for available wallet balances, with yield, liquidity and risk in view.</p></article></section>';}
@@ -192,4 +192,3 @@ if(window.ethereum)window.ethereum.on?.('accountsChanged',accounts=>{account=acc
 render();
 loadStocks();
 loadProtocols();
-
