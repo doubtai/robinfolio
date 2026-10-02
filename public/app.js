@@ -225,6 +225,7 @@ function defiPanel(full=false){
 }
 
 const protocolBrands=[
+ ['Pons','https://www.ponsfamily.com/favicon.png'],
  ['Morpho','https://cdn.morpho.org/v2/assets/images/favicon.svg'],
  ['Uniswap','https://cdn.app.uniswap.org/favicon.png'],
  ['up','https://up33.xyz/favicon.svg'],
