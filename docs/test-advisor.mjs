@@ -55,7 +55,7 @@ tips=recommendations(`
 assert(!tips.some(t=>t.eyebrow==='YIELD WATCH'),'implausible APR outliers must not become advice');
 
 const html=fs.readFileSync('public/app.html','utf8');
-assert(html.includes('/robinfolio-advisor.png'));
+assert(html.includes('/robinfolio-advisor.webp'));
 assert(html.includes('aria-controls="advisor-panel"'));
-assert(fs.statSync('public/robinfolio-advisor.png').size>100000);
+assert(fs.statSync('public/robinfolio-advisor.webp').size>50000);
 console.log('PASS advisor asset, accessible control, real-data liquidity, pricing, concentration, idle-capital and yield guidance');
