@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const source=fs.readFileSync('public/app.js','utf8');
+const el=()=>({addEventListener(){},setAttribute(){},focus(){},classList:{toggle(){}},innerHTML:'',hidden:false});
+const ctx=vm.createContext({document:{querySelector:()=>el(),querySelectorAll:()=>[]},window:{addEventListener(){}},location:{hash:'#overview'},URLSearchParams,AbortSignal,Intl,console,clearTimeout(){},setTimeout(){return 1;}});
+vm.runInContext(source,ctx);
+vm.runInContext(`account='0x'+'1'.repeat(40);holdings.tokens={items:[{symbol:'AAA',name:'Unknown',contract:'0x'+'2'.repeat(40),balance:'1000000000'},{symbol:'ORBIO',name:'Orbio',contract:'0x'+'3'.repeat(40),balance:'10',priceUsd:2},{symbol:'PONS',name:'Pons',contract:'0x'+'4'.repeat(40),balance:'1',verifiedOrigin:'pons launch'},{symbol:'USDG',name:'Global Dollar',contract:USDG,balance:'1'},{symbol:'USDG',name:'Impersonator',contract:'0x'+'9'.repeat(40),balance:'1'}]};liveData={nativeBalanceRaw:'1'};featuredStocks=[{symbol:'NVDA',name:'Nvidia',contract:'0x'+'5'.repeat(40),balance:'0',verifiedOrigin:'Robinhood Stock Token'},{symbol:'SPY',name:'SPY',contract:'0x'+'6'.repeat(40),balance:'0.1',verifiedOrigin:'Robinhood Stock Token'}];`,ctx);
+const html=vm.runInContext('tokenLists()',ctx),wallet=html.slice(html.indexOf('Wallet tokens'));
+assert(html.indexOf('>SPY<')<html.indexOf('>NVDA<'));
+for(const [a,b] of [['ETH','USDG'],['USDG','PONS'],['PONS','ORBIO'],['ORBIO','AAA']])assert(wallet.indexOf('>'+a+'<')<wallet.indexOf('>'+b+'<'),a+' before '+b);
+assert(wallet.includes('/usdg.png'));assert(wallet.includes('$20.00'));assert(!wallet.includes('>SPY<'));
+const api=vm.createContext({fetch:async()=>({ok:true,json:async()=>[{chainId:'robinhood',baseToken:{address:'0xabc'},quoteToken:{address:'0xdef'},priceUsd:'10',priceNative:'2',liquidity:{usd:100000}},{chainId:'other',baseToken:{address:'0xabc'},priceUsd:'99999',liquidity:{usd:999999}}]}),AbortSignal,console});
+vm.runInContext(fs.readFileSync('api/holdings.js','utf8').replace('export default async function handler','async function handler'),api);
+api.items=[{contract:'0xabc'},{contract:'0xdef'},{contract:'0xnone'}];await vm.runInContext('tokenImages(items)',api);
+assert.equal(api.items[0].priceUsd,10);assert.equal(api.items[1].priceUsd,5);assert.equal(api.items[2].priceUsd,undefined);
+console.log('PASS separate stock balance and wallet priority, USDG contract identity, fallback valuation without artwork, quote conversion and chain filtering');

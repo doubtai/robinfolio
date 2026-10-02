@@ -12,12 +12,15 @@ async function tokenImages(items){
     const pairs=await response.json();if(!Array.isArray(pairs))throw Error();
     for(const contract of missing){
       // Pair artwork belongs to the base token, never to the quote token.
+      const matching=pairs.filter(p=>p.chainId==='robinhood'&&(String(p.baseToken?.address).toLowerCase()===contract||String(p.quoteToken?.address).toLowerCase()===contract));
+      const priced=matching.filter(p=>Number.isFinite(Number(p.priceUsd))&&Number(p.priceUsd)>0&&Number(p.liquidity?.usd)>=10000).sort((a,b)=>Number(b.liquidity.usd)-Number(a.liquidity.usd)).find(p=>String(p.baseToken?.address).toLowerCase()===contract||(Number.isFinite(Number(p.priceNative))&&Number(p.priceNative)>0));
+      const priceUsd=priced?(String(priced.baseToken.address).toLowerCase()===contract?Number(priced.priceUsd):Number(priced.priceUsd)/Number(priced.priceNative)):null;
       const pair=pairs.filter(p=>p.chainId==='robinhood'&&String(p.baseToken?.address).toLowerCase()===contract&&typeof p.info?.imageUrl==='string'&&p.info.imageUrl.startsWith('https://')).sort((a,b)=>(Number(b.liquidity?.usd)||0)-(Number(a.liquidity?.usd)||0))[0];
-      logoCache.set(contract,{url:pair?.info.imageUrl||null,until:Date.now()+(pair?3600000:300000)});
+      logoCache.set(contract,{url:pair?.info.imageUrl||null,priceUsd:Number.isFinite(priceUsd)&&priceUsd>0?priceUsd:null,pair:priced?.pairAddress||null,at:Date.now(),until:Date.now()+60000});
     }
     if(logoCache.size>2000)for(const key of [...logoCache.keys()].slice(0,logoCache.size-2000))logoCache.delete(key);
   }catch{/* Optional artwork must never prevent balance discovery. */}
-  for(const item of items){const logo=logoCache.get(item.contract.toLowerCase());if(item.verifiedOrigin!=='Robinhood Stock Token'&&logo?.url){item.logo=logo.url;item.logoSource='DexScreener';}}
+  for(const item of items){const logo=logoCache.get(item.contract.toLowerCase());if(item.verifiedOrigin!=='Robinhood Stock Token'&&logo?.url){item.logo=logo.url;item.logoSource='DexScreener';}if(item.verifiedOrigin!=='Robinhood Stock Token'&&logo?.priceUsd>0){item.priceUsd=logo.priceUsd;item.priceSource='DexScreener';item.priceAt=logo.at;item.pricePair=logo.pair;}}
 }
 async function stockContracts(){
   if(stockCache&&Date.now()-stockCache.time<3600000)return stockCache.contracts;
@@ -106,4 +109,3 @@ export default async function handler(request,response){
     return response.status(502).json({status:'unavailable',reason,error:'Asset data is temporarily unavailable'});
   }
 }
-

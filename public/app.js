@@ -11,6 +11,10 @@ async function loadStocks(){
   try{const response=await fetch('/api/stocks'+(address?'?address='+encodeURIComponent(address):''),{signal:AbortSignal.timeout(35000)});if(!response.ok)throw Error();const data=await response.json();if(request!==stockRequest||address!==account)return;if(!Array.isArray(data.items))throw Error();featuredStocks=data.items;if(data.partial)stocksError='Some stock balances are unavailable.';}catch{if(request===stockRequest&&address===account)stocksError='Stock catalog is temporarily unavailable.';}finally{if(request===stockRequest&&address===account){stocksLoading=false;render();}}
 }
 function nativeUnits(raw){const value=BigInt(raw).toString().padStart(19,'0');return value.slice(0,-18)+(value.slice(-18).replace(/0+$/,'')?'.'+value.slice(-18).replace(/0+$/,''):'');}
+const USDG='0x5fc5360d0400a0fd4f2af552add042d716f1d168';
+const hasAssetBalance=item=>{try{return item.balanceRaw!=null?BigInt(item.balanceRaw)>0n:/[1-9]/.test(String(item.balance||'').replace(/^0\./,''))&&Number(item.balance)>0;}catch{return false;}};
+function walletTokenPriority(item){if(item.native)return 0;if(item.contract?.toLowerCase()===USDG&&hasAssetBalance(item))return 1;if(item.verifiedOrigin==='pons launch')return 2;return 3;}
+function compareWalletTokens(a,b){const aq=walletTokenQuote(a),bq=walletTokenQuote(b);return walletTokenPriority(a)-walletTokenPriority(b)||Number(bq?.value>0)-Number(aq?.value>0)||(bq?.value||0)-(aq?.value||0)||a.symbol.localeCompare(b.symbol);}
 const NATIVE='0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 let allocationData=null,allocationLoading=false,allocationError='';
 async function loadAllocation(){
@@ -27,8 +31,8 @@ function walletAssets(){
 }
 function assetImage(item){
   const indexed=account?allocationData?.items.find(row=>row.contract===item.contract.toLowerCase()):null;
-  const url=item.logo||indexed?.logo;
-  const safe=typeof url==='string'&&(url==='/eth.svg'||/^https:\/\//i.test(url));
+  const url=item.contract.toLowerCase()===USDG?'/usdg.png':item.logo||indexed?.logo;
+  const safe=typeof url==='string'&&(url==='/eth.svg'||url==='/usdg.png'||/^https:\/\//i.test(url));
   return '<span class="token-avatar"><span aria-hidden="true">'+esc((item.symbol||'?').slice(0,2))+'</span>'+(safe?'<img src="'+esc(url)+'" alt="'+esc(item.symbol)+' logo" loading="lazy" referrerpolicy="no-referrer">':'')+'</span>';
 }
 function walletTokenQuote(item){
@@ -41,11 +45,14 @@ function walletTokenQuote(item){
  const currency=item.native?'0x0000000000000000000000000000000000000000':contract;
  const price=positions.flatMap(p=>p.components||[]).find(c=>c.currency?.toLowerCase()===currency&&typeof c.priceUsd==='number'&&Number.isFinite(c.priceUsd)&&c.priceUsd>=0);
  if(price){const value=quantity*price.priceUsd;if(Number.isFinite(value))return {value,estimated:true};}
- return allocationData?.items.find(row=>row.contract===contract)||null;
+ const indexed=allocationData?.items.find(row=>row.contract===contract);
+ if(indexed?.value!=null)return indexed;
+ if(Number.isFinite(item.priceUsd)&&item.priceUsd>0){const value=quantity*item.priceUsd;if(Number.isFinite(value))return {value,estimated:true,source:item.priceSource};}
+ return null;
 }
 function tokenLists(){
-  const items=walletAssets(),stocks=items.filter(item=>item.verifiedOrigin==='Robinhood Stock Token');
-  const tokens=items.filter(item=>item.verifiedOrigin!=='Robinhood Stock Token').sort((a,b)=>Number(Boolean(b.native))-Number(Boolean(a.native))||Number(Boolean(b.verifiedOrigin))-Number(Boolean(a.verifiedOrigin))||a.symbol.localeCompare(b.symbol));
+  const items=walletAssets(),stocks=items.filter(item=>item.verifiedOrigin==='Robinhood Stock Token').sort((a,b)=>Number(hasAssetBalance(b))-Number(hasAssetBalance(a)));
+  const tokens=items.filter(item=>item.verifiedOrigin!=='Robinhood Stock Token').sort(compareWalletTokens);
   const note=!account?'Connect a wallet to check balances.':holdingsLoading.tokens?'Scanning wallet assets… '+(holdings.tokens?.pages||0)+' pages checked.':holdingsErrors.tokens||(holdings.tokens?.partial?'Some balances could not be read.':'Current wallet balances');
   const list=(title,rows,stock)=>'<article class="glass asset-list"><div class="card-head"><h2>'+title+'</h2><small>'+rows.length+' assets</small></div><p class="subtle">'+esc(stock?(stocksLoading?'Loading official stocks…':stocksError||'Official Robinhood stock tokens'):note)+'</p><div class="asset-list-scroll"><table class="data-table"><thead><tr><th>ASSET</th><th>BALANCE</th><th>USD VALUE</th></tr></thead><tbody>'+rows.map(item=>{const quote=walletTokenQuote(item);return '<tr><td><div class="asset-cell">'+assetImage(item)+'<span><a class="asset-name" '+(!item.native?'href="'+CHAIN.explorer+'/token/'+encodeURIComponent(item.contract)+'" target="_blank" rel="noopener noreferrer"':'')+'>'+esc(item.symbol)+'</a><small>'+esc(item.name.replace(' • Robinhood Token',''))+'</small></span></div></td><td class="token-balance" title="'+esc(item.balance??'Unavailable')+'">'+esc(item.balance??'—')+'</td><td>'+(!account?'—':item.balance==='0'?'$0.00':quote?.value!=null?esc(money(quote.value)):'—')+'</td></tr>';}).join('')+(rows.length?'':'<tr><td colspan="3">'+esc(account?'No token balances loaded.':'Connect a wallet to view tokens.')+'</td></tr>')+'</tbody></table></div>'+(!stock&&holdingsErrors.tokens?'<button class="connect" data-holdings="tokens">Resume scan</button>':'')+'</article>';
   return '<div class="asset-lists">'+list('Verified stock tokens',stocks,true)+list('Wallet tokens',tokens,false)+'</div>';
@@ -309,4 +316,3 @@ $('#advisor-body').addEventListener('click',event=>{const link=event.target.clos
 render();
 loadStocks();
 loadProtocols();
-
