@@ -45,14 +45,14 @@ tips=recommendations(`
  protocolData={protocols:[{name:'Pendle',markets:[{name:'PT market',rate:9.25,rateType:'APY',tvlUsd:250000}]}]};
 `);
 assert(tips.some(t=>t.eyebrow==='IDLE CAPITAL'));
-assert(tips.some(t=>t.eyebrow==='YIELD WATCH'&&t.metric==='9.25%'));
+assert(tips.some(t=>t.eyebrow==='OPPORTUNITY'&&t.metric==='9.25%'&&t.title.includes('Opportunity up to 9.25% in PT market')&&t.action==='Check opportunity'&&t.view==='opportunities'));
 
 tips=recommendations(`
  holdings.tokens.items=[{symbol:'ETH',balance:1,quote:{value:100}}];
  defiData={items:[],partial:false};
  protocolData={protocols:[{name:'Ramses',markets:[{name:'Bad outlier',rate:60604.75,rateType:'APR',tvlUsd:250000}]}]};
 `);
-assert(!tips.some(t=>t.eyebrow==='YIELD WATCH'),'implausible APR outliers must not become advice');
+assert(!tips.some(t=>t.eyebrow==='OPPORTUNITY'),'implausible APR outliers must not become advice');
 
 const html=fs.readFileSync('public/app.html','utf8');
 assert(html.includes('/vlad-advisor-transparent.png'));
