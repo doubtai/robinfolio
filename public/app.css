@@ -14,6 +14,13 @@
 .overview-left>.asset-lists .card-head small{font-size:9px;white-space:nowrap}
 .overview-left>.asset-lists p{font-size:10px;line-height:1.4;margin:4px 0 10px;min-height:28px}
 .overview-left>.asset-lists .asset-list-scroll{flex:1;min-height:0;max-height:none;overflow:auto;scrollbar-width:thin}
+
+/* Quiet, platform-colored scrollbars for data-heavy cards. */
+.asset-list-scroll,.defi-position-scroll{scrollbar-width:thin;scrollbar-color:rgba(105,151,116,.55) rgba(38,67,46,.16)}
+.asset-list-scroll::-webkit-scrollbar,.defi-position-scroll::-webkit-scrollbar{width:8px;height:8px}
+.asset-list-scroll::-webkit-scrollbar-track,.defi-position-scroll::-webkit-scrollbar-track{margin-block:6px;border-radius:999px;background:rgba(38,67,46,.16)}
+.asset-list-scroll::-webkit-scrollbar-thumb,.defi-position-scroll::-webkit-scrollbar-thumb{min-height:42px;border:2px solid transparent;border-radius:999px;background:rgba(105,151,116,.55);background-clip:padding-box}
+.asset-list-scroll::-webkit-scrollbar-thumb:hover,.defi-position-scroll::-webkit-scrollbar-thumb:hover{background:rgba(103,190,125,.72);background-clip:padding-box}
 .overview-left>.asset-lists .data-table{margin-top:0}
 .overview-left>.asset-lists th{font-size:8px;padding:4px 3px 8px;position:sticky;top:0;background:#0c1a11;z-index:1}
 .overview-left>.asset-lists td{font-size:10px;padding:9px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
