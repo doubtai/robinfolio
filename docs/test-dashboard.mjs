@@ -20,5 +20,5 @@ backend.process.env.ONEINCH_API_KEY='';await vm.runInContext("handler({method:'G
 console.log('PASS history chain filter, sorting, deduplication, invalid values, quality flag, missing credential');
 
 assert(!element.innerHTML.includes('Asset allocation'));
-vm.runInContext("view='opportunities';render()",ctx);assert(element.innerHTML.includes('Market opportunities'));assert(element.innerHTML.includes('Coming next'));assert(!element.innerHTML.includes('APY'));assert(!source.toLowerCase().includes('aave'));
-console.log('PASS allocation removed, opportunities route is placeholder only, Aave absent');
+vm.runInContext("view='opportunities';render()",ctx);assert(element.innerHTML.includes('Market opportunities'));assert(element.innerHTML.includes('APR/APY ceiling · 1000%'));assert(!element.innerHTML.includes('Coming next'));assert(!source.toLowerCase().includes('aave'));
+console.log('PASS allocation removed, live opportunities route present, Aave absent');
