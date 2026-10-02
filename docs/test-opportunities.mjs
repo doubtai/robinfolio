@@ -16,7 +16,7 @@ vm.runInContext(source.slice(start,end),ctx);
 
 const rows=JSON.parse(vm.runInContext(`
 protocolData={protocols:[{name:'Ramses',url:'https://ramses.xyz',status:'available',markets:[
- {name:'WETH/USDG',type:'liquidity',rate:24,rateType:'APR',tvlUsd:500000},
+ {name:'WETH/USDG',type:'concentrated-liquidity',rate:24,rateType:'APR',tvlUsd:500000,risks:['concentrated-liquidity']},
  {name:'NEWCOIN/WETH',type:'concentrated-liquidity',rate:80,rateType:'APR',tvlUsd:9000},
  {name:'IMPOSSIBLE/WETH',type:'liquidity',rate:1000.01,rateType:'APR',tvlUsd:1000000},
  {name:'CLOSED/WETH',type:'liquidity',rate:20,rateType:'APR',tvlUsd:100000,closed:true}
@@ -29,6 +29,8 @@ assert(rows.find(row=>row.name==='WETH/USDG').score>rows.find(row=>row.name==='N
 const html=vm.runInContext('opportunitiesPage()',ctx);
 assert(html.includes('New or unverified token'));
 assert(html.includes('Low liquidity'));
+assert(html.includes('Active range'));
 assert(html.includes('APR/APY ceiling · 1000%'));
 assert(html.includes('Liquidity pools'));
 console.log('PASS opportunity aggregation, 1000% ceiling, pool inclusion, unknown-token and low-liquidity warnings');
+
