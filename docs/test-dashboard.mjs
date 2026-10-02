@@ -2,8 +2,9 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 const source=fs.readFileSync('public/app.js','utf8');
-const element={addEventListener(){},classList:{toggle(){}},innerHTML:''};
-const ctx=vm.createContext({document:{querySelector:()=>element,querySelectorAll:()=>[]},window:{addEventListener(){}},location:{hash:'#overview'},URLSearchParams,AbortSignal,Intl,console});
+const node=()=>({addEventListener(){},setAttribute(){},focus(){},classList:{toggle(){}},innerHTML:'',textContent:'',hidden:false});
+const element=node(),nodes=new Map([['#main-content',element]]);
+const ctx=vm.createContext({document:{querySelector:selector=>nodes.get(selector)||nodes.set(selector,node()).get(selector),querySelectorAll:()=>[]},window:{addEventListener(){}},location:{hash:'#overview'},URLSearchParams,AbortSignal,Intl,console,clearTimeout(){},setTimeout(){return 1;}});
 vm.runInContext(source,ctx);
 for(const text of ['124,530','AAPLx','Rialto','12.48%','demoAssets'])assert(!source.includes(text));
 for(const title of ['Portfolio value','Verified stock tokens','Wallet tokens','DeFi positions','Market insight'])assert(element.innerHTML.includes(title));
@@ -21,4 +22,3 @@ console.log('PASS history chain filter, sorting, deduplication, invalid values, 
 assert(!element.innerHTML.includes('Asset allocation'));
 vm.runInContext("view='opportunities';render()",ctx);assert(element.innerHTML.includes('Market opportunities'));assert(element.innerHTML.includes('Coming next'));assert(!element.innerHTML.includes('APY'));assert(!source.toLowerCase().includes('aave'));
 console.log('PASS allocation removed, opportunities route is placeholder only, Aave absent');
-
