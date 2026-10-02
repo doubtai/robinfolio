@@ -47,6 +47,13 @@ tips=recommendations(`
 assert(tips.some(t=>t.eyebrow==='IDLE CAPITAL'));
 assert(tips.some(t=>t.eyebrow==='YIELD WATCH'&&t.metric==='9.25%'));
 
+tips=recommendations(`
+ holdings.tokens.items=[{symbol:'ETH',balance:1,quote:{value:100}}];
+ defiData={items:[],partial:false};
+ protocolData={protocols:[{name:'Ramses',markets:[{name:'Bad outlier',rate:60604.75,rateType:'APR',tvlUsd:250000}]}]};
+`);
+assert(!tips.some(t=>t.eyebrow==='YIELD WATCH'),'implausible APR outliers must not become advice');
+
 const html=fs.readFileSync('public/app.html','utf8');
 assert(html.includes('/robinfolio-advisor.png'));
 assert(html.includes('aria-controls="advisor-panel"'));
