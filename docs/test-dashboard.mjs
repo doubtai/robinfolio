@@ -11,6 +11,9 @@ for(const title of ['Portfolio value','Verified stock tokens','Wallet tokens','D
 assert(element.innerHTML.includes('class="glass overview-wallet-tracker"'));
 assert(element.innerHTML.includes('Paste any public Robinhood Chain address'));
 assert(element.innerHTML.indexOf('overview-wallet-tracker')<element.innerHTML.indexOf('overview-columns'),'wallet tracker must sit above the dashboard cards');
+assert(element.innerHTML.includes('Integrated protocols'));
+assert(!element.innerHTML.includes('Protocols integrated'));
+assert(!fs.readFileSync('public/app.html','utf8').includes('data-view="swap"'));
 assert(!element.innerHTML.includes('performance-chart'));assert(!element.innerHTML.includes('$'));
 vm.runInContext("account='0x'+'1'.repeat(40);historyData={points:[{at:1000,value:10},{at:2000,value:20}],partial:false};render()",ctx);assert(element.innerHTML.includes('$20.00'));assert(element.innerHTML.includes('Indexed portfolio'));assert(!element.innerHTML.includes('profit'));
 vm.runInContext("account='';render()",ctx);assert(!element.innerHTML.includes('$20.00'));assert(!element.innerHTML.includes('performance-chart'));
@@ -34,4 +37,9 @@ assert(element.innerHTML.includes('class="protocol-tile"'));
 assert(element.innerHTML.includes('Compare opportunities'));
 assert(!element.innerHTML.includes('will be added separately'));
 console.log('PASS collapsible DeFi coverage and structured connected-protocol cards');
+
+vm.runInContext("view='activity';account='0x'+'1'.repeat(40);liveData={sources:{transactions:{status:'available',truncated:false}},transactions:[{hash:'0x'+'a'.repeat(64),from:account,to:'0x'+'2'.repeat(40),value:'1000000000000000000',input:'0x',timeStamp:'1700000000',isError:'0',txreceipt_status:'1'},{hash:'0x'+'b'.repeat(64),from:'0x'+'2'.repeat(40),to:account,value:'0',input:'0x1234',functionName:'deposit(uint256)',timeStamp:'1700000100',isError:'1',txreceipt_status:'0'}]};render()",ctx);
+for(const text of ['Activity','Sent','Deposit','1 ETH','Confirmed','Failed','on explorer'])assert(element.innerHTML.includes(text));
+assert(element.innerHTML.includes('robin.etherscan.io/tx/'));
+console.log('PASS refined activity direction, action, value, status, time and explorer links');
 
