@@ -25,6 +25,7 @@ protocolData={protocols:[{name:'Ramses',url:'https://ramses.xyz',status:'availab
 assert.equal(rows.length,2,'closed and >1000% markets must be excluded');
 assert(rows.some(row=>row.name==='WETH/USDG'&&!row.unknownToken&&!row.lowLiquidity));
 assert(rows.some(row=>row.name==='NEWCOIN/WETH'&&row.unknownToken&&row.lowLiquidity));
+assert(rows.find(row=>row.name==='WETH/USDG').score>rows.find(row=>row.name==='NEWCOIN/WETH').score,'risk-adjusted ranking must strongly discount an unknown low-liquidity token');
 const html=vm.runInContext('opportunitiesPage()',ctx);
 assert(html.includes('New or unverified token'));
 assert(html.includes('Low liquidity'));
