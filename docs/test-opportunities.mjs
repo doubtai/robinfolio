@@ -16,13 +16,15 @@ vm.runInContext(source.slice(start,end),ctx);
 
 const rows=JSON.parse(vm.runInContext(`
 protocolData={protocols:[{name:'Ramses',url:'https://ramses.xyz',status:'available',markets:[
- {name:'WETH/USDG',type:'concentrated-liquidity',rate:24,rateType:'APR',tvlUsd:500000,risks:['concentrated-liquidity']},
+ {id:'ramses:0x1111111111111111111111111111111111111111',protocol:'ramses',contract:'0x1111111111111111111111111111111111111111',name:'WETH/USDG',type:'concentrated-liquidity',rate:24,rateType:'APR',tvlUsd:500000,risks:['concentrated-liquidity']},
  {name:'NEWCOIN/WETH',type:'concentrated-liquidity',rate:80,rateType:'APR',tvlUsd:9000},
  {name:'IMPOSSIBLE/WETH',type:'liquidity',rate:1000.01,rateType:'APR',tvlUsd:1000000},
  {name:'CLOSED/WETH',type:'liquidity',rate:20,rateType:'APR',tvlUsd:100000,closed:true}
+]},{name:'Pendle',url:'https://app.pendle.finance',status:'available',markets:[
+ {id:'pendle:0x2222222222222222222222222222222222222222',protocol:'pendle',contract:'0x2222222222222222222222222222222222222222',name:'USDG PT',type:'yield-liquidity',rate:12,rateType:'APY',tvlUsd:200000}
 ]}]};JSON.stringify(opportunityMarkets())
 `,ctx));
-assert.equal(rows.length,2,'closed and >1000% markets must be excluded');
+assert.equal(rows.length,3,'closed and >1000% markets must be excluded');
 assert(rows.some(row=>row.name==='WETH/USDG'&&!row.unknownToken&&!row.lowLiquidity));
 assert(rows.some(row=>row.name==='NEWCOIN/WETH'&&row.unknownToken&&row.lowLiquidity));
 assert(rows.find(row=>row.name==='WETH/USDG').score>rows.find(row=>row.name==='NEWCOIN/WETH').score,'risk-adjusted ranking must strongly discount an unknown low-liquidity token');
@@ -32,5 +34,10 @@ assert(html.includes('Low liquidity'));
 assert(html.includes('Active range'));
 assert(html.includes('APR/APY ceiling · 1000%'));
 assert(html.includes('Liquidity pools'));
-console.log('PASS opportunity aggregation, 1000% ceiling, pool inclusion, unknown-token and low-liquidity warnings');
+assert(html.includes('data-opportunity-protocol="Ramses"'));
+assert(html.includes('data-opportunity-protocol="Pendle"'));
+assert(html.includes('class="opportunity-list"'));
+assert.equal(vm.runInContext("opportunityMarketUrl({protocol:'ramses',contract:'0x1111111111111111111111111111111111111111'})",ctx),'https://www.ramses.xyz/deposit/0x1111111111111111111111111111111111111111');
+assert.equal(vm.runInContext("opportunityMarketUrl({protocol:'pendle',contract:'0x2222222222222222222222222222222222222222'})",ctx),'https://app.pendle.finance/trade/markets/0x2222222222222222222222222222222222222222?chain=robinhood');
+console.log('PASS opportunity aggregation, protocol filters, compact list, direct market links and risk warnings');
 
