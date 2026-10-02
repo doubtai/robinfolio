@@ -8,9 +8,12 @@ const ctx=vm.createContext({document:{querySelector:selector=>nodes.get(selector
 vm.runInContext(source,ctx);
 for(const text of ['124,530','AAPLx','Rialto','12.48%','demoAssets'])assert(!source.includes(text));
 for(const title of ['Portfolio value','Verified stock tokens','Wallet tokens','DeFi positions','Market insight'])assert(element.innerHTML.includes(title));
-assert(!element.innerHTML.includes('<path'));assert(!element.innerHTML.includes('$'));
+assert(element.innerHTML.includes('class="glass overview-wallet-tracker"'));
+assert(element.innerHTML.includes('Paste any public Robinhood Chain address'));
+assert(element.innerHTML.indexOf('overview-wallet-tracker')<element.innerHTML.indexOf('overview-columns'),'wallet tracker must sit above the dashboard cards');
+assert(!element.innerHTML.includes('performance-chart'));assert(!element.innerHTML.includes('$'));
 vm.runInContext("account='0x'+'1'.repeat(40);historyData={points:[{at:1000,value:10},{at:2000,value:20}],partial:false};render()",ctx);assert(element.innerHTML.includes('$20.00'));assert(element.innerHTML.includes('Indexed portfolio'));assert(!element.innerHTML.includes('profit'));
-vm.runInContext("account='';render()",ctx);assert(!element.innerHTML.includes('$20.00'));assert(!element.innerHTML.includes('<path'));
+vm.runInContext("account='';render()",ctx);assert(!element.innerHTML.includes('$20.00'));assert(!element.innerHTML.includes('performance-chart'));
 console.log('PASS empty dashboard, no demo numbers, real-point chart, disconnect removes wallet history');
 const handlerSource=fs.readFileSync('api/history.js','utf8').replace('export default async function handler','async function handler');
 let output,status,requestUrl;const now=Math.floor(Date.now()/1000);
