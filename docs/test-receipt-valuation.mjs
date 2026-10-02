@@ -29,6 +29,7 @@ globalThis.fetch=async(url,options={})=>{
 const prices=await pendlePrices([pt,yt,missing]);assert.equal(prices.get(pt).usd,200);assert.equal(prices.get(yt).usd,0.5);assert.equal(prices.has(missing),false);
 const market={assets:[asset],assetSymbol:'USDG'};
 let p=await receiptValue({protocol:'Longbow',contract:vault,wallet,market});assert.equal(p.value,1.25);assert.equal(p.underlyingAmountRaw,'1250000');assert.equal(p.components[0].symbol,'USDG');
+p=await receiptValue({protocol:'Arcadia',contract:vault,wallet,market});assert.equal(p.value,1.25);assert.equal(p.underlyingAmountRaw,'1250000');
 for(const [contract,value] of [[pt,200],[yt,0.5]]){p=await receiptValue({protocol:'Pendle',contract,wallet,market,price:prices.get(contract)});assert.equal(p.value,value);}
 p=await receiptValue({protocol:'Pendle',contract:yt,wallet,market,price:{usd:0}});assert.equal(p.value,0,'an explicit zero YT price must remain valid');
 p=await receiptValue({protocol:'Pendle',contract:missing,wallet,market});assert.equal(p.value,null);assert(p.balanceRaw);assert(p.valuationPartial);
