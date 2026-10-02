@@ -22,3 +22,13 @@ console.log('PASS history chain filter, sorting, deduplication, invalid values, 
 assert(!element.innerHTML.includes('Asset allocation'));
 vm.runInContext("view='opportunities';render()",ctx);assert(element.innerHTML.includes('Market opportunities'));assert(element.innerHTML.includes('APR/APY ceiling · 1000%'));assert(!element.innerHTML.includes('Coming next'));assert(!source.toLowerCase().includes('aave'));
 console.log('PASS allocation removed, live opportunities route present, Aave absent');
+
+vm.runInContext("view='defi';account='0x'+'1'.repeat(40);defiData={items:[],scope:'Indexed sources.',partial:true,sources:[{name:'Morpho',status:'available',scope:'Markets and vaults indexed.'}],supported:[{id:'morpho',name:'Morpho'}]};protocolData={protocols:[{name:'Arcadia',url:'https://example.com/arcadia',status:'available',markets:[{},{}],catalogPartial:false}]};render()",ctx);
+assert(element.innerHTML.includes('<details class="defi-coverage-disclosure">'));
+assert(element.innerHTML.includes('Index coverage'));
+assert(element.innerHTML.includes('What Robinfolio can read from each protocol'));
+assert(element.innerHTML.includes('class="protocol-tile"'));
+assert(element.innerHTML.includes('Compare opportunities'));
+assert(!element.innerHTML.includes('will be added separately'));
+console.log('PASS collapsible DeFi coverage and structured connected-protocol cards');
+
