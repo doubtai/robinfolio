@@ -13,10 +13,11 @@ assert.equal(settleLaunch(storage,launch,receipt).state,'confirmed');assert.equa
 settleLaunch(storage,launch,receipt);assert.equal(loadHistory(storage).length,1);
 const next={hash:'0x'+'d'.repeat(64),token:'0x'+'e'.repeat(40)};storage.setItem(PENDING_KEY,JSON.stringify(next));settleLaunch(storage,next,{transactionHash:next.hash,status:'0x0'});assert.equal(loadHistory(storage)[0].state,'failed');assert.equal(loadPending(storage),null);
 const wallet=Wallet.createRandom(),bytes=fs.readFileSync('public/robinfolio-mark.png'),hash=createHash('sha256').update(bytes).digest('hex'),timestamp=Date.now();
-const body={image:bytes.toString('base64'),timestamp,signature:await wallet.signMessage(uploadMessage(hash,timestamp))},allowed=[wallet.address.toLowerCase()];
-const file=validateUpload(body,allowed);assert.equal(file.contentType,'image/png');assert.ok(file.path.endsWith(hash+'.png'));
-assert.throws(()=>validateUpload(body,[]),/not enabled/);assert.throws(()=>validateUpload(body,allowed,timestamp+300001),/expired/);
-assert.throws(()=>validateUpload({...body,image:Buffer.from('<svg onload="alert(1)"></svg>').toString('base64')},allowed),/PNG/);
-assert.throws(()=>validateUpload({...body,image:Buffer.alloc(1048577).toString('base64')},allowed),/1 MB/);
-assert.throws(()=>validateUpload({...body,timestamp:timestamp+1},allowed));
-console.log('PASS: confirmed and reverted launches unlock; pending launches remain protected; legacy records migrate; history deduplicates; image upload validates signature, owner, expiry, bytes and size.');
+const body={address:wallet.address,image:bytes.toString('base64'),timestamp,signature:await wallet.signMessage(uploadMessage(hash,timestamp))};
+const file=validateUpload(body);assert.equal(file.contentType,'image/png');assert.ok(file.path.endsWith(hash+'.png'));
+assert.throws(()=>validateUpload(body,timestamp+300001),/expired/);
+assert.throws(()=>validateUpload({...body,image:Buffer.from('<svg onload="alert(1)"></svg>').toString('base64')}),/PNG/);
+assert.throws(()=>validateUpload({...body,image:Buffer.alloc(3*1048576+1).toString('base64')}),/3 MB/);
+assert.throws(()=>validateUpload({...body,timestamp:timestamp+1}));
+console.log('PASS: confirmed and reverted launches unlock; pending launches remain protected; legacy records migrate; history deduplicates; image upload validates signature from any wallet, expiry, bytes and size.');
+
