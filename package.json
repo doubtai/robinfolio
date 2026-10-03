@@ -11,6 +11,7 @@
   "dependencies": {
     "@ethersproject/keccak256": "5.8.0",
     "@uniswap/v3-sdk": "3.31.5",
+    "@vercel/blob": "^2.8.0",
     "ethers": "6.15.0"
   },
   "type": "module"

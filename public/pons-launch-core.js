@@ -15,9 +15,9 @@ export const abi=new Interface([
 ]);
 export function validateFields(raw){
  const field=(name,max)=>{const value=String(raw[name]||'').trim();if(!value||value.length>max)throw Error('Check '+name+' (1–'+max+' characters).');return value;};
- const url=(name,ipfs=false)=>{const value=field(name,500);let parsed;try{parsed=new URL(value);}catch{throw Error('Enter a complete URL for '+name+'.');}if(parsed.protocol!=='https:'&&!(ipfs&&parsed.protocol==='ipfs:'))throw Error(name+' must use HTTPS'+(ipfs?' or IPFS.':'.'));return value;};
+ const url=(name,ipfs=false)=>{if(name!=='logo'&&!String(raw[name]||'').trim())return '';const value=field(name,500);let parsed;try{parsed=new URL(value);}catch{throw Error('Enter a complete URL for '+name+'.');}if(parsed.protocol!=='https:'&&!(ipfs&&parsed.protocol==='ipfs:'))throw Error(name+' must use HTTPS'+(ipfs?' or IPFS.':'.'));if(parsed.username||parsed.password)throw Error('Remove credentials from '+name+'.');return value;};
  const values={name:field('name',64),symbol:field('symbol',16),description:field('description',1000),logo:url('logo',true),website:url('website'),twitter:url('twitter')};
- if(!['x.com','www.x.com','twitter.com','www.twitter.com'].includes(new URL(values.twitter).hostname))throw Error('Use an X / Twitter profile URL.');
+ if(values.twitter&&!['x.com','www.x.com','twitter.com','www.twitter.com'].includes(new URL(values.twitter).hostname))throw Error('Use an X / Twitter profile URL.');
  return values;
 }
 export async function readTerms(rpc,account){
