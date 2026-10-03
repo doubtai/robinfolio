@@ -11,3 +11,5 @@ Redeploy after connecting storage or changing environment variables. GET /api/la
 Smoke test: connect an authorized wallet, select a harmless test image, click Upload image, sign the message yourself, and verify the returned public URL loads. Do not click Confirm in wallet unless actually launching a token.
 
 Repeat launches: the receipt is checked automatically through the read-only RPC endpoint, even before connecting a wallet. Successful and reverted transactions move to browser-local history and unlock Create another token. Pending transactions are retained across reloads. Starting another token clears all token metadata and the previous review, preserving the selected launch configuration. Every review uses a fresh salt and current onchain terms.
+
+Image mode is exclusive: upload mode keeps the hosted URL internally and does not require a URL input. URL mode does not require a file. Pair candidates come from the official Pons catalog and are filtered by live factory approval and nonzero economics. Native ETH uses the zero address and launch-config economics. Creator tax accepts two decimal places and is rechecked against the onchain cap on every review.

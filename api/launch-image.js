@@ -1,4 +1,4 @@
-import {put,head} from '@vercel/blob';
+import {put,head,BlobNotFoundError} from '@vercel/blob';
 import {validateUpload} from '../lib/launch-upload.js';
 export default async function handler(req,res){
  res.setHeader('Cache-Control','no-store');
@@ -11,7 +11,7 @@ export default async function handler(req,res){
  let file;try{file=validateUpload(req.body,allowed);}catch(e){return res.status(400).json({error:e.message});}
  try{
   // Stable content-addressed paths make repeated submissions idempotent.
-  let existing;try{existing=await head(file.path);}catch(e){if(e.name!=='BlobNotFoundError')throw e;}
+  let existing;try{existing=await head(file.path);}catch(e){if(!(e instanceof BlobNotFoundError))throw e;}
   const blob=existing||await put(file.path,file.bytes,{access:'public',contentType:file.contentType,addRandomSuffix:false,allowOverwrite:false,cacheControlMaxAge:31536000});
   return res.status(200).json({url:blob.url});
  }catch{return res.status(502).json({error:'Image hosting is temporarily unavailable. Try again or use an image URL.'});}
